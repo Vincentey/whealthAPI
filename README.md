@@ -14,9 +14,9 @@ The current version of the API includes:
 
 - `POST /auth/register` – Register a new user
 - `POST /auth/login` – Log in an existing user
-- `POST /profile/setup` – Complete user profile
-- `GET /profile` – View profile details
-- `PUT /profile/edit` – Edit profile information
+- `POST /profilesetup` – Complete user profile
+- `GET /profileView` – View profile details
+- `PUT /profileEdit` – Edit profile information
 
 ##  In Progress
 
