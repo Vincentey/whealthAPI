@@ -47,7 +47,8 @@ curl --request POST 'http://localhost:3000/whealth/auth/register' \
     "firstName": "Elizabeth",
     "lastName": "Dada",
     "category": "doctor"
-  }' ```
+  }' 
+```
 
 ### Responses
 
