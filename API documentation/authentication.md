@@ -142,7 +142,7 @@ curl --request POST 'http://localhost:3000/whealth/auth/login' \
   },
   "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 }
-```json
+```
 
 ### Validation & Tips
 
