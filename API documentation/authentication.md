@@ -116,7 +116,7 @@ curl --request POST 'http://localhost:3000/whealth/auth/login' \
     "email": "vincrayun9@gmail.com",
     "password": "Vinci999@@@"
   }'
-
+```
 ### Responses
 
 | HTTP Code | Meaning        | Body (JSON)                                           | When Returned            |
