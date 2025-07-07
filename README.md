@@ -1,6 +1,6 @@
 # Whealth API – Telemedicine API Documentation Project
 
-The **Whealth API** is a telemedicine backend API I created to showcase my technical writing skills — particularly in API documentation — as a developer who also writes. This project demonstrates my ability to design, build, and document real-world APIs for potential clients and employers.
+The **Whealth API** is a telemedicine API that features login and registration for patient and doctors, appointment scheduling, virtual consultation and payment. 
 
 ##  Features
 
