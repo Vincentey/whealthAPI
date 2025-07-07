@@ -12,8 +12,8 @@ The current version of the API includes:
 
 ##  Endpoints (Implemented)
 
-- `POST /auth/register` – Register a new user
-- `POST /auth/login` – Log in an existing user
+- `POST /auth/register` – Register a new user (https://github.com/Vincentey/whealthAPI/blob/main/API%20documentation/authentication.md)
+- `POST /auth/login` – Log in an existing user (https://github.com/Vincentey/whealthAPI/blob/main/API%20documentation/authentication.md)
 - `POST /profilesetup` – Complete user profile
 - `GET /profileView` – View profile details
 - `PUT /profileEdit` – Edit profile information
