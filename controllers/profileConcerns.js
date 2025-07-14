@@ -79,7 +79,7 @@ const viewProfile = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    return res.status(200).json({ data: authUser });
+    return res.status(200).json({ data: authUser, message: "Profile found and returned" });
   } catch (e) {
     console.log(e);
     res.status(400).json({ message: "Error loading profile" });

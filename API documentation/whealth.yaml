@@ -1,0 +1,232 @@
+openapi: 3.0.3
+info:
+  title: Telemedicine API
+  version: 1.0.0
+  description: |
+    This is a REST API for a telemedicine platform that supports user registration, login, and patient-doctor interactions.
+
+servers:
+  - url: http://localhost:3000
+    description: Local development server
+
+tags:
+  - name: Authentication
+    description: User registration and login
+  - name: Profile
+    description: Profile-related operations
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Profile:
+      type: object
+      required:
+        - image
+        - Sex
+        - Religion
+        - Nationality
+        - Contact_no
+        - Email
+        - Address
+        - BloodGroup
+        - Genotype
+        - DateOfBirth
+      properties:
+        image:
+          type: string
+          format: uri
+          description: Public URL of the profile image
+        Sex:
+          type: string
+          enum: [male, female, others]
+        Religion:
+          type: string
+        Nationality:
+          type: string
+        Contact_no:
+          type: string
+          description: Phone number in international format
+        Email:
+          type: string
+          format: email
+        Address:
+          type: string
+        BloodGroup:
+          type: string
+          enum: [A+, A, B+, B, AB+, AB, O+, O]
+        Genotype:
+          type: string
+          enum: [AA, AS, SS, SC]
+        DateOfBirth:
+          type: string
+          description: Date of birth in DD/MM/YYYY or ISO format
+        PastSurgicalHistory:
+          type: string
+          enum: [Yes, No]
+        ChronicConditions:
+          type: string
+          enum:
+            - None
+            - Hypertension
+            - Diabetes mellitus
+            - Obesity
+            - Asthma
+            - Chronic Kidney Disease
+            - Heart disease
+            - Arthritis
+            - Others
+paths:
+  /auth/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - firstName
+                - lastName
+                - category
+              properties:
+                email:
+                  type: string
+                  example: user@example.com
+                password:
+                  type: string
+                  example: Password123!
+                firstName:
+                  type: string
+                  example: Vincent
+                lastName:
+                  type: string
+                  example: Adeyemi
+                   
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User created successfully
+                  
+        '400':
+          description: Bad request or validation error
+
+  /auth/login:
+    post:
+      tags:
+        - Authentication
+      summary: Log in a registered user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+              properties:
+                email:
+                  type: string
+                  example: user@example.com
+                password:
+                  type: string
+                  example: Password123!
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Login successful
+                  data:
+                    type: object
+                    properties:
+                      _id:
+                        type: string
+                      userId:
+                        type: string
+                      email:
+                        type: string
+        '401':
+          description: Unauthorized – invalid credentials
+
+  /patientdashboard/profileSetUp:
+    post:
+      summary: Create or update user profile
+      tags: [Profile]
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+      responses:
+        "200":
+          description: Profile saved or updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Profile'
+        "400":
+          description: Invalid or missing fields
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "401":
+          description: Token expired or missing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  
