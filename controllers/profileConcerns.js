@@ -101,7 +101,7 @@ const editProfile = async (req, res) => {
     }
     res
       .status(200)
-      .send({ message: "Profile Setup Successfully", data: updatedUser });
+      .send({ message: "Profile Updated Successfully", data: updatedUser });
   } catch (e) {
     return res
       .status(500)

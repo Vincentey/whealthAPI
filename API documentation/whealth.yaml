@@ -78,6 +78,70 @@ components:
             - Heart disease
             - Arthritis
             - Others
+
+    Profileresponse:
+      type: object
+      required:
+        - _id
+        - patientId
+        - image
+        - Sex
+        - Religion
+        - Nationality
+        - Contact_no
+        - Email
+        - Address
+        - BloodGroup
+        - Genotype
+        - DateOfBirth
+      properties:
+        _id:
+          type: string
+          description: Internal MongoDB identifier
+        patientId:
+          type: string
+          format: uuid
+        image:
+          type: string
+          format: uri
+        Sex:
+          type: string
+          enum: [male, female, others]
+        Religion:
+          type: string
+        Nationality:
+          type: string
+        Contact_no:
+          type: string
+        Email:
+          type: string
+          format: email
+        Address:
+          type: string
+        BloodGroup:
+          type: string
+          enum: [A+, A, B+, B, AB+, AB, O+, O]
+        Genotype:
+          type: string
+          enum: [AA, AS, SS, SC]
+        DateOfBirth:
+          type: string
+          description: Date of birth (ISO 8601 or DD/MM/YYYY)
+        PastSurgicalHistory:
+          type: string
+          enum: [Yes, No]
+        ChronicConditions:
+          type: string
+          enum:
+            - None
+            - Hypertension
+            - Diabetes mellitus
+            - Obesity
+            - Asthma
+            - Chronic Kidney Disease
+            - Heart disease
+            - Arthritis
+            - Others
 paths:
   /auth/register:
     post:
@@ -204,6 +268,66 @@ paths:
                     type: string
         "401":
           description: Token expired or missing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+  /patientdashboard/parentPatientProfile/{patientId}:
+    get:
+      summary: Fetch a user’s profile by ID
+      tags: [Profile]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: patientId
+          in: path
+          required: true
+          description: UUID of the patient (or doctor) whose profile is requested
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "200":
+          description: Profile found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Profileresponse'
+        "400":
+          description: Invalid patientId format
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "401":
+          description: Token missing, expired, or invalid
           content:
             application/json:
               schema:

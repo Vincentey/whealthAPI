@@ -199,6 +199,10 @@ curl --request GET 'http://localhost:3000/whealth/patientdashboard/parentPatient
     "__v": 0
   }
 }
+```
+
+---
+
 
 ## Validation & Tips
 
@@ -208,5 +212,138 @@ curl --request GET 'http://localhost:3000/whealth/patientdashboard/parentPatient
 - Use **HTTPS** in production to protect personal health information (PHI).  
 - The response mirrors the **Profile Setup** payload; destructure only the fields you need in your UI.
 
+
+---
+
+# Edit Profile
+
+`PUT /whealth/patientdashboard/editProfile/{patientId}`
+
+Update a patient’s / doctor’s stored profile.
+
+---
+
+## Overview
+
+- Requires a valid **Bearer token** from the login response.  
+- Accepts a **path parameter** `patientId` to identify which profile to update.  
+- Body may include any subset of profile fields; only supplied fields are overwritten.  
+- Responds with the **updated** profile plus internal identifiers (`_id`, `patientId`).
+
+---
+
+## Endpoint Details
+
+|               |                                                               |
+|---------------|---------------------------------------------------------------|
+| **Base URL**  | `http://localhost:3000`                                       |
+| **Full Path** | `/whealth/patientdashboard/editProfile/{patientId}`           |
+| **Method**    | `PUT`                                                         |
+| **Auth**      | Bearer token (JWT) – **required**                             |
+
+---
+
+## Request
+
+### Headers
+
+| Header          | Value                | Required | Notes               |
+|-----------------|----------------------|----------|---------------------|
+| `Content-Type`  | `application/json`   | ✔        | Must be JSON        |
+| `Authorization` | `Bearer <JWT-token>` | ✔        | Token from login    |
+
+### Path Parameters
+
+| Parameter  | Type   | Required | Notes                         |
+|------------|--------|----------|-------------------------------|
+| `patientId`| string | ✔        | UUID of patient / doctor      |
+
+### Body Schema (partial update)
+
+All fields are **optional**; include only those that should be modified.
+
+| Field                | Type   | Constraints / Notes                                                                                                          |
+|----------------------|--------|------------------------------------------------------------------------------------------------------------------------------|
+| `image`              | string | Public image URL                                                                                                              |
+| `Sex`                | string | enum: `male` \| `female` \| `others`                                                                                          |
+| `Religion`           | string |                                                                                                                               |
+| `Nationality`        | string | Country name                                                                                                                  |
+| `Contact_no`         | string | Phone number (international format)                                                                                           |
+| `Email`              | string | Must match profile’s primary e‑mail if changed                                                                               |
+| `Address`            | string |                                                                                                                               |
+| `BloodGroup`         | string | enum: `A+`, `A`, `B+`, `B`, `AB+`, `AB`, `O+`, `O`                                                                           |
+| `Genotype`           | string | enum: `AA`, `AS`, `SS`, `SC`                                                                                                  |
+| `DateOfBirth`        | string | **DD/MM/YYYY** or ISO `YYYY‑MM‑DD`                                                                                            |
+| `PastSurgicalHistory`| string | enum: `Yes`, `No`                                                                                                             |
+| `ChronicConditions`  | string | enum: `None`, `Hypertension`, `Diabetes mellitus`, `Obesity`, `Asthma`, `Chronic Kidney Disease`, `Heart disease`, `Arthritis`, `Others` |
+
+### Example Request
+
+```bash
+curl --request PUT 'http://localhost:3000/whealth/patientdashboard/editProfile/1bb9dda9-6e1f-48b3-9b96-6b1ab0912587' \
+  --header 'Content-Type: application/json' \
+  --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' \
+  --data-raw '{
+    "image": "https://example.com/image.jpg",
+    "Sex": "female",
+    "Religion": "Christian",
+    "Nationality": "Canada",
+    "Contact_no": "+1234567890",
+    "Email": "example@example.com",
+    "Address": "123 Example St, Example City, EX 12345",
+    "BloodGroup": "O+",
+    "Genotype": "AA",
+    "DateOfBirth": "01/01/1990",
+    "PastSurgicalHistory": "No",
+    "ChronicConditions": "None"
+  }'
+```
+
+---
+
+## Responses
+
+| HTTP Code | Meaning        | Body (JSON)                                               | When Returned                                  |
+|-----------|----------------|-----------------------------------------------------------|------------------------------------------------|
+| **200**   | OK             | `{ "data": { _id, patientId, <updated‑fields> } }`       | Profile updated & token valid                  |
+| **401**   | Unauthorized   | `{ "message": "Token expired" }`                         | Token missing / expired / invalid               |
+| **404**   | Not Found      | `{ "message": "User not found" }`                        | No profile for given `patientId`               |
+| **400**   | Bad Request    | `{ "message": "Invalid field value(s)" }`                | Enum violation, bad date, etc.                 |
+| **500**   | Server Error   | `{ "message": "Error updating profile" }`                | Unexpected server/database failure             |
+
+### Example Success (200)
+
+```json
+{
+  "data": {
+    "_id": "68630278a31fcbc8db811e6c",
+    "patientId": "1bb9dda9-6e1f-48b3-9b96-6b1ab0912587",
+    "image": "https://example.com/image.jpg",
+    "Sex": "female",
+    "Religion": "Christian",
+    "Nationality": "Canada",
+    "Contact_no": "+1234567890",
+    "Email": "example@example.com",
+    "Address": "123 Example St, Example City, EX 12345",
+    "BloodGroup": "O+",
+    "Genotype": "AA",
+    "DateOfBirth": "1990-01-01",
+    "PastSurgicalHistory": "No",
+    "ChronicConditions": "None",
+    "__v": 1
+  }
+}
+```
+
+---
+
+## Validation & Tips
+
+- **Bearer token required:** Include `Authorization: Bearer <token>` in every request.  
+- `patientId` must be a valid UUID and **belong to the authenticated user** (or the doctor’s patient).  
+- Only include the fields you want to modify; unspecified fields remain unchanged.  
+- Enumerated fields (`Sex`, `BloodGroup`, etc.) are **case‑sensitive**; invalid values trigger **400 Bad Request**.  
+- If `Email` is updated, ensure it’s unique to prevent a potential **409 Conflict** (if the API enforces e‑mail uniqueness).  
+- Always use **HTTPS** in production to safeguard personal health information (PHI).
 
 
