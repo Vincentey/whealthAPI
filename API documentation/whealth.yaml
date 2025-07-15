@@ -353,4 +353,66 @@ paths:
                 properties:
                   message:
                     type: string
-  
+  /patientdashboard/editProfile/{patientId}:
+    put:
+      summary: Edit an existing profile
+      tags: [Profile]
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: patientId
+          in: path
+          required: true
+          description: UUID of the patient (or doctor) whose profile is being edited
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Profile'
+      responses:
+        "200":
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profileresponse'
+        "400":
+          description: Invalid field value(s)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "401":
+          description: Token expired or missing
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
